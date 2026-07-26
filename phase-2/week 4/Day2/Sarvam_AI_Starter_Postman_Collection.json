@@ -1,0 +1,254 @@
+{
+  "info": {
+    "_postman_id": "8a72d9c4-7de7-4c4a-8f03-8f5a6f8a9c11",
+    "name": "Sarvam AI - Starter API Collection",
+    "description": "Starter Postman collection for Sarvam AI APIs.\n\nSetup:\n1. Import this collection into Postman.\n2. Open the collection Variables tab.\n3. Set `sarvam_api_key` Current Value to your API key.\n4. For Speech-to-Text, select a local audio file in the `file` form-data field.\n\nThe API key is sent using the `api-subscription-key` header.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "api-subscription-key",
+        "type": "string"
+      },
+      {
+        "key": "value",
+        "value": "{{sarvam_api_key}}",
+        "type": "string"
+      },
+      {
+        "key": "in",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://api.sarvam.ai",
+      "type": "string"
+    },
+    {
+      "key": "sarvam_api_key",
+      "value": "",
+      "type": "secret"
+    }
+  ],
+  "item": [
+    {
+      "name": "Chat Completion",
+      "item": [
+        {
+          "name": "Basic Chat - Sarvam 105B",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"sarvam-105b\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Explain retrieval-augmented generation in simple terms.\"\n    }\n  ],\n  \"temperature\": 0.2,\n  \"max_tokens\": 500\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/chat/completions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "description": "Generate a multilingual chat response using Sarvam-105B. You may change the model to `sarvam-30b` for a lower-cost option."
+          },
+          "response": []
+        },
+        {
+          "name": "Structured JSON Response",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"sarvam-105b\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Return JSON containing intent and urgency for: My order has not arrived yet.\"\n    }\n  ],\n  \"response_format\": {\n    \"type\": \"json_object\"\n  },\n  \"temperature\": 0.1,\n  \"max_tokens\": 250\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/v1/chat/completions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "description": "Requests a valid JSON object using the OpenAI-compatible response_format parameter."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Text Processing",
+      "item": [
+        {
+          "name": "Translate English to Tamil",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"input\": \"Welcome to Sarvam AI. How can I help you today?\",\n  \"source_language_code\": \"en-IN\",\n  \"target_language_code\": \"ta-IN\",\n  \"model\": \"sarvam-translate:v1\",\n  \"mode\": \"formal\",\n  \"numerals_format\": \"international\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/translate",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "translate"
+              ]
+            },
+            "description": "Translate text into Tamil. Change target_language_code to another supported BCP-47 language code as needed."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Speech",
+      "item": [
+        {
+          "name": "Speech to Text - Saaras v3",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": [],
+                  "description": "Select a local audio file. REST requests are intended for audio under 30 seconds."
+                },
+                {
+                  "key": "model",
+                  "value": "saaras:v3",
+                  "type": "text"
+                },
+                {
+                  "key": "mode",
+                  "value": "transcribe",
+                  "type": "text"
+                },
+                {
+                  "key": "language_code",
+                  "value": "unknown",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/speech-to-text",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "speech-to-text"
+              ]
+            },
+            "description": "Transcribe a short audio file. Supported Saaras v3 modes include transcribe, translate, verbatim, translit, and codemix."
+          },
+          "response": []
+        },
+        {
+          "name": "Text to Speech - Bulbul v3",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"வணக்கம்! சர்வம் ஏஐக்கு வரவேற்கிறோம்.\",\n  \"target_language_code\": \"ta-IN\",\n  \"model\": \"bulbul:v3\",\n  \"speaker\": \"shubh\",\n  \"pace\": 1.0,\n  \"speech_sample_rate\": 24000,\n  \"enable_preprocessing\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/text-to-speech",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "text-to-speech"
+              ]
+            },
+            "description": "Generate base64-encoded speech audio. The response contains an `audios` array; decode the first value and save it as a WAV file."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.test('Request completed successfully', function () {",
+          "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202]);",
+          "});",
+          "",
+          "pm.test('Response has a request ID when provided', function () {",
+          "    let body;",
+          "    try { body = pm.response.json(); } catch (e) { return; }",
+          "    if (body.request_id !== undefined) {",
+          "        pm.expect(body.request_id).to.be.a('string');",
+          "    }",
+          "});"
+        ]
+      }
+    }
+  ]
+}
