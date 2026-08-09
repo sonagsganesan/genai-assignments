@@ -1,0 +1,109 @@
+{
+  "info": {
+    "_postman_id": "98af7ba5-403c-46ef-9819-5dbdf207c3f4",
+    "name": "RAG Mongo Demo - Cohere Embeddings",
+    "description": "API requests using the Cohere provider selected by EMBEDDING_PROVIDER for both test cases and user stories, plus MongoDB Atlas search and background ingestion jobs. Credentials remain in the server-side .env file.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3001/api", "type": "string" },
+    { "key": "jobId", "value": "", "type": "string" },
+    { "key": "testcaseFile", "value": "converted-1234567890.json", "type": "string" },
+    { "key": "userStoryFile", "value": "stories-1234567890.json", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "System and Jobs",
+      "item": [
+        { "name": "Health", "request": { "method": "GET", "url": "{{baseUrl}}/health" } },
+        { "name": "List Data Files", "request": { "method": "GET", "url": "{{baseUrl}}/files" } },
+        { "name": "Distinct Metadata", "request": { "method": "GET", "url": "{{baseUrl}}/metadata/distinct" } },
+        { "name": "Active Jobs", "request": { "method": "GET", "url": "{{baseUrl}}/jobs/active" } },
+        { "name": "Job Status", "request": { "method": "GET", "url": "{{baseUrl}}/jobs/{{jobId}}" } },
+        { "name": "Latest Test Case ID", "request": { "method": "GET", "url": "{{baseUrl}}/testcases/latest-id" } }
+      ]
+    },
+    {
+      "name": "Upload",
+      "item": [
+        {
+          "name": "Upload Test Cases Excel",
+          "request": {
+            "method": "POST",
+            "body": { "mode": "formdata", "formdata": [
+              { "key": "file", "type": "file", "src": "" },
+              { "key": "dataType", "value": "testcases", "type": "text" }
+            ] },
+            "url": "{{baseUrl}}/upload-excel"
+          }
+        },
+        {
+          "name": "Upload User Stories Excel",
+          "request": {
+            "method": "POST",
+            "body": { "mode": "formdata", "formdata": [
+              { "key": "file", "type": "file", "src": "" },
+              { "key": "dataType", "value": "userstories", "type": "text" }
+            ] },
+            "url": "{{baseUrl}}/upload-excel"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cohere Embeddings",
+      "item": [
+        {
+          "name": "Create Test Case Embeddings - Cohere (Batch)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "if (pm.response.code >= 200 && pm.response.code < 300) {",
+            "  const body = pm.response.json();",
+            "  if (body.jobId) pm.collectionVariables.set('jobId', body.jobId);",
+            "}"
+          ], "type": "text/javascript" } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"files\": [\"{{testcaseFile}}\"],\n  \"scriptName\": \"create-embeddings-batch-mistral.js\",\n  \"jobType\": \"testcases\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/create-embeddings-batch"
+          }
+        },
+        {
+          "name": "Create User Story Embeddings - Cohere (Batch)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "if (pm.response.code >= 200 && pm.response.code < 300) {",
+            "  const body = pm.response.json();",
+            "  if (body.jobId) pm.collectionVariables.set('jobId', body.jobId);",
+            "}"
+          ], "type": "text/javascript" } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"files\": [\"{{userStoryFile}}\"],\n  \"scriptName\": \"create-userstories-embeddings-batch-mistral.js\",\n  \"jobType\": \"userstories\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/create-embeddings-batch"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Search",
+      "item": [
+        { "name": "Test Case Vector Search (Cohere)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"query\": \"login failure test cases\",\n  \"limit\": 5,\n  \"filters\": {}\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/search" } },
+        { "name": "BM25 Search", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"query\": \"login failure\",\n  \"limit\": 10,\n  \"filters\": {},\n  \"fields\": [\"id\", \"title\", \"description\", \"steps\", \"expectedResults\", \"module\"]\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/search/bm25" } },
+        { "name": "Test Case Hybrid Search (Cohere + BM25)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"query\": \"login failure test cases\",\n  \"limit\": 10,\n  \"filters\": {},\n  \"bm25Weight\": 0.5,\n  \"vectorWeight\": 0.5\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/search/hybrid" } },
+        { "name": "User Stories Hybrid Search (Cohere + BM25)", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"query\": \"authentication changes affecting regression\",\n  \"limit\": 10,\n  \"filters\": {},\n  \"bm25Weight\": 0.4,\n  \"vectorWeight\": 0.6\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/search/user-stories" } },
+        { "name": "Search and Rerank with Groq", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"query\": \"checkout regression tests\",\n  \"limit\": 10,\n  \"filters\": {},\n  \"rerankTopK\": 50\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/search/rerank" } }
+      ]
+    },
+    {
+      "name": "Query Utilities",
+      "item": [
+        { "name": "Preprocess Query", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"query\": \"auth API regression\",\n  \"options\": {\n    \"enableAbbreviations\": true,\n    \"enableSynonyms\": true,\n    \"maxSynonymVariations\": 5\n  }\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/search/preprocess" } },
+        { "name": "Analyze Query", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"query\": \"auth API regression\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/search/analyze" } },
+        { "name": "Deduplicate Results", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"threshold\": 0.85,\n  \"results\": [\n    { \"id\": \"TC_0001\", \"title\": \"Valid user login\" },\n    { \"id\": \"TC_0002\", \"title\": \"Valid user login flow\" }\n  ]\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/search/deduplicate" } },
+        { "name": "Summarize Results with Groq", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"query\": \"login tests\",\n  \"summaryType\": \"concise\",\n  \"results\": [\n    { \"id\": \"TC_0001\", \"title\": \"Valid login\", \"description\": \"Verify a valid user can sign in\" }\n  ]\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/search/summarize" } },
+        { "name": "Test Groq Prompt", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"prompt\": \"Return a one-line test strategy for login.\",\n  \"temperature\": 0.2,\n  \"maxTokens\": 500\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/test-prompt" } }
+      ]
+    }
+  ]
+}
