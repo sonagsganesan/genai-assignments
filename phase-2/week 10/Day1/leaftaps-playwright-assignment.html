@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leaftaps Playwright Test Generation Assignment</title>
+  <style>
+    @page { size: A4; margin: 16mm; }
+    :root { --ink: #1d2935; --muted: #5e6d78; --line: #d8e0e6; --accent: #0f766e; --soft: #eef8f6; --code: #18232d; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: #e8edf0; font: 10.5pt/1.5 "Segoe UI", Arial, sans-serif; }
+    .page { max-width: 210mm; min-height: 297mm; margin: 0 auto 14px; padding: 18mm 18mm 20mm; background: #fff; break-after: page; }
+    .page:last-child { break-after: auto; }
+    .eyebrow { color: var(--accent); font-size: 8pt; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { margin: 12mm 0 4mm; font-size: 30pt; line-height: 1.08; letter-spacing: -.03em; }
+    h2 { margin: 0 0 4mm; font-size: 20pt; line-height: 1.15; }
+    h3 { margin: 7mm 0 2mm; font-size: 12pt; }
+    p { margin: 0 0 3.5mm; }
+    .lead { color: var(--muted); font-size: 13pt; }
+    .rule { height: 3px; margin: 7mm 0; background: var(--accent); }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; margin: 7mm 0; }
+    .card { padding: 4mm; border: 1px solid var(--line); border-radius: 2mm; background: #f8fafb; }
+    .card strong { display: block; margin-bottom: 1mm; }
+    code { padding: .3mm 1mm; border-radius: 1mm; background: #edf1f3; font: 9pt Consolas, monospace; }
+    pre { margin: 4mm 0; padding: 4mm; overflow: auto; border-radius: 2mm; color: #e9f2f5; background: var(--code); font: 8.3pt/1.5 Consolas, monospace; white-space: pre-wrap; }
+    .callout { margin: 5mm 0; padding: 3.5mm 4mm; border-left: 3px solid var(--accent); background: var(--soft); }
+    ol, ul { padding-left: 6mm; }
+    li { margin-bottom: 2mm; }
+    table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+    th, td { padding: 2.5mm; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: #fff; background: #24404b; }
+    tr:nth-child(even) td { background: #f7f9fa; }
+    .footer { margin-top: 10mm; padding-top: 2mm; border-top: 1px solid var(--line); color: var(--muted); font-size: 8pt; display: flex; justify-content: space-between; }
+    @media print { body { background: #fff; } .page { margin: 0; } }
+  </style>
+</head>
+<body>
+  <section class="page">
+    <div class="eyebrow">Playwright test generator assignment</div>
+    <h1>Leaftaps Login and Logout</h1>
+    <p class="lead">Repository-aware TypeScript test generation using SonicFramework-main.</p>
+    <div class="rule"></div>
+    <p><strong>Objective.</strong> Generate a Playwright test for the Leaftaps authentication workflow, using the repository's existing fixtures, page objects, selectors, configuration, and reporting conventions.</p>
+    <div class="grid">
+      <div class="card"><strong>Repository</strong><code>E:\Testleaf-AI-ML\SonicFramework-main</code></div>
+      <div class="card"><strong>Application</strong><code>https://leaftaps.com/opentaps/</code></div>
+      <div class="card"><strong>Credentials</strong><code>democsr / crmsfa</code></div>
+      <div class="card"><strong>Output</strong><code>tests/TC005_login_logout.spec.ts</code></div>
+    </div>
+    <h3>Scenario</h3>
+    <ol>
+      <li>Go to the Leaftaps application.</li>
+      <li>Log in with <code>democsr</code> and <code>crmsfa</code>.</li>
+      <li>Verify the authenticated page.</li>
+      <li>Click Logout.</li>
+      <li>Verify the login page is displayed again.</li>
+      <li>Allow the Playwright fixture to close the browser context.</li>
+    </ol>
+    <h3>Additional example case: Invalid login credentials</h3>
+    <ol>
+      <li>Go to the Leaftaps application.</li>
+      <li>Enter an invalid username and password.</li>
+      <li>Submit the login form.</li>
+      <li>Verify that the login error message is displayed and the authenticated page is not opened.</li>
+    </ol>
+    <div class="footer"><span>Leaftaps Playwright assignment</span><span>1</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">01 · Agent installation and setup</div>
+    <h2>Install the test-generation environment</h2>
+    <p>The assignment uses the existing SonicFramework-main project. The commands below install dependencies and the Playwright browser required to run the generated test.</p>
+    <pre>cd E:\Testleaf-AI-ML\SonicFramework-main
+npm install
+npx playwright install chromium</pre>
+    <h3>Run the complete test suite</h3>
+    <pre>npm test</pre>
+    <h3>Run only the generated scenario</h3>
+    <pre>npx playwright test tests/TC005_login_logout.spec.ts --project=chromium</pre>
+    <h3>Relevant project configuration</h3>
+    <ul>
+      <li><code>playwright.config.ts</code> uses <code>./tests</code> as the test directory.</li>
+      <li>The configured browser project is Chromium.</li>
+      <li>Tests run headed because <code>headless: false</code> is configured.</li>
+      <li>The HTML reporter is enabled.</li>
+      <li>Video recording is enabled.</li>
+      <li>The custom fixture is provided by <code>customFixtures/leaftapsFixture.ts</code>.</li>
+    </ul>
+    <h3>Existing authentication data</h3>
+    <p><code>constants/credentialData.ts</code> contains the <code>USERLOGIN</code> mapping:</p>
+    <pre>USERLOGIN: {
+    username: "democsr",
+    password: "crmsfa"
+}</pre>
+    <div class="footer"><span>Installation and configuration</span><span>2</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">02 · Prompt supplied to the agent</div>
+    <h2>Generation prompt</h2>
+    <pre>You are a Playwright TypeScript test generator for this repository E:\Testleaf-AI-ML\SonicFramework-main
+
+Before generating a script, inspect:
+
+1. An existing spec for a similar workflow
+2. The relevant page objects and reusable helpers
+3. The Playwright configuration and fixtures
+
+Generate a test for the requested scenario using the repository's established format.
+
+Rules:
+
+- Match the existing spec's imports, test structure, naming, and file location.
+- Use the project's fixtures, page objects, and helpers. Do not invent methods or imports.
+- Follow the framework's authentication, test data, assertion, reporting, and cleanup patterns.
+- Use stable locators and Playwright assertions; do not use fixed waits.
+- Keep setup and cleanup consistent with comparable tests.
+- If a required page object method or fixture does not exist, identify the gap instead of pretending it exists.
+
+Input scenario:
+go to https://leaftaps.com/opentaps/
+login with credentials: democsr/crmsfa
+click on logout and close browser</pre>
+    <h3>Agent inspection targets</h3>
+    <table>
+      <tr><th>Area</th><th>Repository evidence</th></tr>
+      <tr><td>Comparable specs</td><td><code>tests/TC001_create_lead.spec.ts</code> and related lead specs use <code>test.describe.serial</code>, annotations, and custom fixtures.</td></tr>
+      <tr><td>Authentication page object</td><td><code>pages/leaftapsLoginPage.ts</code> exposes <code>leaftapsLogin(role)</code>.</td></tr>
+      <tr><td>Fixture</td><td><code>customFixtures/leaftapsFixture.ts</code> exposes <code>LeaftapsLogin</code> and other Leaftaps page objects.</td></tr>
+      <tr><td>Configuration</td><td><code>playwright.config.ts</code> defines the test directory, Chromium project, reporter, video, and headed execution.</td></tr>
+    </table>
+    <div class="footer"><span>Prompt and inspection scope</span><span>3</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">03 · Generated output</div>
+    <h2>TypeScript Playwright test</h2>
+    <p>The generated test uses the existing <code>USERLOGIN</code> credential mapping and the custom fixture. It relies on Playwright's auto-waiting assertions and does not use fixed waits.</p>
+    <pre>import { expect } from "@playwright/test"
+import { test } from "../customFixtures/leaftapsFixture"
+
+test.describe.serial("Leaftaps authentication and logout", () =&gt; {
+    test("Login as democsr and logout", async ({ page, LeaftapsLogin }) =&gt; {
+        test.info().annotations.push(
+            { type: 'TestCase', description: 'Login as democsr and logout' },
+        );
+
+        // 1. Navigate to https://leaftaps.com/opentaps/
+        // 2. Enter username democsr in the username field
+        // 3. Enter password crmsfa in the password field
+        // 4. Submit the login form
+        await LeaftapsLogin.leaftapsLogin("USERLOGIN");
+
+        // 5. Verify the authenticated Leaftaps page is displayed
+        await expect(page.getByRole('heading', { name: 'Welcome Demo B2B CSR' })).toBeVisible();
+
+        // 6. Click Logout
+        await page.getByRole('button', { name: 'Logout' }).click();
+
+        // 7. Verify the login page is displayed again
+        await expect(page.getByRole('heading', { name: 'Leaftaps Login' })).toBeVisible();
+
+        // 8. The Playwright fixture closes the browser context after the test.
+    });
+});</pre>
+    <h3>Why this matches the framework</h3>
+    <ul>
+      <li>Imports the repository's custom <code>leaftapsFixture</code> test object.</li>
+      <li>Uses the existing <code>LeaftapsLogin.leaftapsLogin("USERLOGIN")</code> method.</li>
+      <li>Uses the existing serial describe pattern and test annotations.</li>
+      <li>Uses accessible role locators and <code>expect(...).toBeVisible()</code>.</li>
+      <li>Does not add fixed waits, navigation waits, or invented fixture methods.</li>
+    </ul>
+    <div class="footer"><span>Generated Playwright output</span><span>4</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">04 · Framework gap and execution evidence</div>
+    <h2>Gap analysis</h2>
+    <p>The framework currently has no reusable logout method in <code>LeaftapsMyHomePage</code>. The selector registry contains a <code>logoutButton</code> entry, but no page-object method calls it.</p>
+    <div class="callout"><strong>Decision:</strong> The test uses the supplied <code>page</code> fixture for the Logout interaction instead of pretending that a missing page-object method exists.</div>
+    <h3>Recommended framework addition</h3>
+    <pre>public async logout() {
+    await this.click(selectors.logoutButton, "Logout", "Button");
+    return this;
+}</pre>
+    <p>After adding this method to <code>pages/leaftapsMyHomePage.ts</code>, the test could replace the direct page click with <code>await LeaftapsMyHome.logout()</code>. This addition is optional for the generated test because the current test remains explicit and functional.</p>
+    <h3>Live generator result</h3>
+    <table>
+      <tr><th>Step</th><th>Observed result</th></tr>
+      <tr><td>Navigate</td><td>Redirected to the Leaftaps login flow.</td></tr>
+      <tr><td>Login</td><td>Authenticated as Demo B2B CSR using <code>democsr/crmsfa</code>.</td></tr>
+      <tr><td>Authenticated assertion</td><td><code>Welcome Demo B2B CSR</code> heading was visible.</td></tr>
+      <tr><td>Logout</td><td>Logout button returned the browser to the login page.</td></tr>
+      <tr><td>Logged-out assertion</td><td><code>Leaftaps Login</code> heading was visible.</td></tr>
+    </table>
+    <h3>Assumptions</h3>
+    <ul>
+      <li>The supplied credentials remain valid in the Leaftaps test environment.</li>
+      <li>Closing the browser means allowing the Playwright test fixture to close its context automatically.</li>
+      <li>The browser run was validated interactively; the local command-line test run should be performed after dependencies and Chromium are installed.</li>
+    </ul>
+    <div class="footer"><span>Gap analysis and validation</span><span>5</span></div>
+  </section>
+</body>
+</html>
