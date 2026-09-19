@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Swagger AI Agent — Assignment</title>
+  <style>
+    @page { size: A4; margin: 0; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #20322a; background: #e8ede8; font: 10.5pt/1.48 Arial, sans-serif; }
+    .page { position: relative; width: 210mm; min-height: 297mm; margin: 0 auto 12px; padding: 20mm 19mm 21mm; background: #fff; break-after: page; overflow: hidden; }
+    .page:last-child { break-after: auto; }
+    .topline { color: #5a8764; font-size: 8pt; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+    h1 { margin: 12mm 0 5mm; font-size: 32pt; line-height: 1.08; letter-spacing: -.04em; }
+    h2 { margin: 0 0 5mm; font-size: 21pt; letter-spacing: -.035em; }
+    h3 { margin: 7mm 0 2mm; font-size: 12pt; }
+    p { margin: 0 0 3.5mm; }
+    .sub { color: #567263; font-size: 12pt; }
+    .rule { height: 2px; margin: 7mm 0; background: #a7d96a; }
+    .eyebrow { color: #538059; font-size: 8pt; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+    .card { padding: 4.5mm; border: 1px solid #dce8d9; border-radius: 3mm; background: #f8fbf6; }
+    .card strong { display: block; margin-bottom: 1mm; }
+    .meta { margin-top: 15mm; display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+    .meta div { border-top: 1px solid #bdd4b7; padding-top: 2mm; color: #526b5a; font-size: 9pt; }
+    .figure { margin: 5mm 0; border: 1px solid #d9e5d8; border-radius: 3mm; overflow: hidden; background: #f8fbf7; }
+    .figure img { display: block; width: 100%; height: auto; }
+    .figure.crop img { height: 78mm; object-fit: cover; object-position: top; }
+    .figure.small img { max-height: 82mm; object-fit: contain; }
+    figcaption { padding: 2mm 3mm; color: #526c59; font-size: 8.5pt; border-top: 1px solid #d9e5d8; }
+    .steps { margin: 3mm 0 0; padding-left: 5mm; }
+    .steps li { margin-bottom: 2mm; }
+    code { padding: .3mm 1mm; border-radius: 1mm; background: #eef4ec; font: 9pt Consolas, monospace; }
+    .code { margin: 4mm 0; padding: 4mm; border-radius: 2mm; color: #e8f7df; background: #173d32; font: 8.6pt/1.5 Consolas, monospace; white-space: pre-wrap; }
+    .callout { margin: 5mm 0; padding: 3.5mm 4mm; border-left: 3px solid #86b957; background: #eff6e9; }
+    table { width: 100%; border-collapse: collapse; font-size: 8.5pt; }
+    th { background: #173d32; color: #fff; text-align: left; }
+    th, td { padding: 2.6mm; border: 1px solid #dce6da; vertical-align: top; }
+    tr:nth-child(even) td { background: #f7faf5; }
+    .footer { position: absolute; left: 19mm; right: 19mm; bottom: 10mm; display: flex; justify-content: space-between; border-top: 1px solid #dce6da; padding-top: 2mm; color: #6b8070; font-size: 8pt; }
+    .badge { display: inline-block; margin: 2mm 0; padding: 1.5mm 2.5mm; color: #315e3a; background: #e8f5df; border-radius: 1.5mm; font-size: 8pt; font-weight: 700; }
+    @media print { body { background: #fff; } .page { margin: 0; } }
+  </style>
+</head>
+<body>
+  <section class="page">
+    <div class="topline">Software testing assignment · API automation</div>
+    <h1>Swagger AI Agent</h1>
+    <p class="sub">Contract-driven API verification with screenshots and test scenarios</p>
+    <div class="rule"></div>
+    <p><strong>Objective.</strong> Demonstrate how an OpenAPI specification becomes a selected set of API checks, an execution report, and a reusable Playwright test suite.</p>
+    <div class="grid" style="margin-top:8mm">
+      <div class="card"><strong>System under test</strong>Included Customer API on <code>127.0.0.1:8081</code>, authenticated with a bearer token.</div>
+      <div class="card"><strong>Agent workspace</strong>React user interface and Express API on <code>127.0.0.1:3000</code>.</div>
+      <div class="card"><strong>Inputs</strong>OpenAPI document, selected operations, environment URL, credentials, and test options.</div>
+      <div class="card"><strong>Outputs</strong>Run plan, request and response evidence, pass/fail totals, and generated Playwright tests.</div>
+    </div>
+    <h3>Workflow at a glance</h3>
+    <p>Import specification → select endpoint → configure target → plan checks → run → inspect evidence → generate suite.</p>
+    <h3>Evidence used in this assignment</h3>
+    <p>The screenshots were captured from the running application with the included demo API. The browser check uses a free local port, so its screenshots show a different port from the manual quick start. The passing and invalid-token scenarios were exercised through the browser workflow. Additional scenarios on the final page are acceptance cases with expected outcomes.</p>
+    <div class="footer"><span>Swagger AI Agent assignment</span><span>1 / 7</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Scenario 01 · Import</div>
+    <h2>Load the API contract</h2>
+    <p>The import screen accepts pasted JSON or YAML, a specification URL, or an uploaded file. The demo document defines <code>GET /customers/{id}</code> and its expected <code>200</code> response.</p>
+    <figure class="figure crop"><img src="screenshots/01-import.png" alt="Import screen showing Customer API specification"><figcaption>Figure 1. OpenAPI import form with the Customer API example.</figcaption></figure>
+    <h3>Steps and expected result</h3>
+    <ol class="steps"><li>Start the demo API and agent service.</li><li>Open <code>http://127.0.0.1:3000/ui/</code>.</li><li>Keep the sample YAML and select <strong>Import specification</strong>.</li><li>Confirm the operation explorer lists <code>getCustomer</code>.</li></ol>
+    <div class="callout"><strong>Observed:</strong> the browser workflow imported the sample contract and displayed one operation.</div>
+    <div class="footer"><span>Contract import and normalization</span><span>2 / 7</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Scenario 02 · Configuration and planning</div>
+    <h2>Choose the target and plan</h2>
+    <p>Select the operation and save a target environment. The demo uses <code>http://127.0.0.1:8081</code> with bearer token <code>demo-token</code>. Planning shows the number of checks before any API request is sent.</p>
+    <figure class="figure"><img src="screenshots/02-workspace.png" alt="Operation explorer and target environment"><figcaption>Figure 2. Selected operation and saved target environment.</figcaption></figure>
+    <figure class="figure small"><img src="screenshots/03-plan.png" alt="Execution controls with a planned run"><figcaption>Figure 3. Execution controls after planning.</figcaption></figure>
+    <div class="callout"><strong>Observed:</strong> environment creation and update succeeded; the application prepared a plan for the selected operation.</div>
+    <div class="footer"><span>Environment and test planning</span><span>3 / 7</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Scenario 03 · Positive execution</div>
+    <h2>Run with valid credentials</h2>
+    <p>With the demo bearer token, <code>GET /customers/123</code> returns <code>200</code>. The report shows the expected status, request URL, redacted authorization header, response body, and duration.</p>
+    <figure class="figure"><img src="screenshots/04-report.png" alt="Passing API execution report"><figcaption>Figure 4. Completed run: 1 passed, 0 failed.</figcaption></figure>
+    <table><tr><th>Input</th><th>Expected</th><th>Observed</th></tr><tr><td>Valid bearer token; customer ID 123</td><td>HTTP 200 and a passed check</td><td>HTTP 200; report shows 1 passed and 0 failed</td></tr></table>
+    <div class="callout">The run report is evidence for the response to this particular request. It does not prove every possible customer ID or business rule.</div>
+    <div class="footer"><span>Positive API test and evidence</span><span>4 / 7</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Scenario 04 · Negative execution</div>
+    <h2>Detect invalid authentication</h2>
+    <p>Change the environment token to <code>invalid-token</code>, save the environment, and run the same operation. The target returns <code>401</code> while the selected happy-path check expects <code>200</code>; the report flags the mismatch.</p>
+    <figure class="figure"><img src="screenshots/06-failed-run.png" alt="Failed run caused by invalid bearer token"><figcaption>Figure 5. Failed run caused by an invalid bearer token.</figcaption></figure>
+    <table><tr><th>Input</th><th>Expected</th><th>Observed</th></tr><tr><td>Invalid bearer token; customer ID 123</td><td>Happy-path check fails and shows the actual 401 response</td><td>Report shows 1 failed; request and response evidence is available</td></tr></table>
+    <p style="margin-top:5mm">After this test, restore <code>demo-token</code>. The browser workflow confirms the next run passes again.</p>
+    <div class="footer"><span>Negative API test and failure analysis</span><span>5 / 7</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Scenario 05 · Test generation</div>
+    <h2>Export reusable automation</h2>
+    <p>The selected operation can be converted into a Playwright API test file. The preview includes the request, expected status, and environment variable use. The browser offers a download; the REST export endpoint provides a package manifest and config too.</p>
+    <figure class="figure"><img src="screenshots/05-suite.png" alt="Generated Playwright API test suite"><figcaption>Figure 6. Generated Playwright API test preview.</figcaption></figure>
+    <div class="callout"><strong>Run requirement:</strong> set <code>TEST_BASE_URL</code> and, for this demo, <code>TEST_BEARER_TOKEN</code>. Review generated IDs and payloads before running write operations.</div>
+    <div class="footer"><span>Reusable Playwright test generation</span><span>6 / 7</span></div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Acceptance scenarios and conclusion</div>
+    <h2>Scenario checklist</h2>
+    <p>The first six scenarios below were exercised in the captured browser workflow. The remaining cases define useful follow-up acceptance coverage.</p>
+    <table>
+      <tr><th>ID</th><th>Scenario</th><th>Expected outcome</th><th>Status</th></tr>
+      <tr><td>S01</td><td>Import valid OpenAPI YAML</td><td>Operation appears in explorer</td><td>Verified</td></tr>
+      <tr><td>S02</td><td>Create and update target environment</td><td>Environment is saved and can be used for a run</td><td>Verified</td></tr>
+      <tr><td>S03</td><td>Plan selected operation</td><td>Plan shows count before execution</td><td>Verified</td></tr>
+      <tr><td>S04</td><td>Run with valid token</td><td>HTTP 200; check passes</td><td>Verified</td></tr>
+      <tr><td>S05</td><td>Run with invalid token</td><td>Actual 401 is shown; happy-path check fails</td><td>Verified</td></tr>
+      <tr><td>S06</td><td>Generate Playwright suite</td><td>Code preview and download are available</td><td>Verified</td></tr>
+      <tr><td>S07</td><td>Import malformed YAML</td><td>Validation message; no new spec selected</td><td>Proposed</td></tr>
+      <tr><td>S08</td><td>Enter invalid target URL</td><td>Save is blocked with a clear message</td><td>Proposed</td></tr>
+      <tr><td>S09</td><td>Restart the agent</td><td>In-memory run history is cleared</td><td>Proposed</td></tr>
+    </table>
+    <h3>Conclusion</h3>
+    <p>The demonstrated flow traces a contract operation through planning, an actual HTTP call, a report, and generated automation. The failed-token case shows that the report retains the information needed to investigate a mismatch. The agent stores data in memory, so a production deployment would need persistent storage and operational hardening.</p>
+    <h3>Reproduce the demo</h3>
+    <div class="code">npm ci
+npm ci --prefix client
+npm run build
+npm run demo:api         # terminal 1
+$env:ALLOW_PRIVATE_NETWORK='true'; npm start   # terminal 2
+# open http://127.0.0.1:3000/ui/</div>
+    <div class="footer"><span>Assignment summary and acceptance coverage</span><span>7 / 7</span></div>
+  </section>
+</body>
+</html>
